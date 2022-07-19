@@ -113,7 +113,7 @@ ax2.set_title("Medium Frequency")
 ax3.plot(oscillations[-1])
 ax3.set_title("High Frequency")
 
-plt.savefig("3_classes_oscillations.png", dpi=600)
+plt.savefig("3_classes_oscillations.png", dpi=300)
 #plt.show()
 plt.close("all")
 
@@ -135,4 +135,4 @@ dataset.to_csv("oscillation_dataset.csv", index=False)
 print("Process Complete.")
 print("Dataset Generated and Saved as .csv")
 
-print(dataset)
+#print(dataset)
