@@ -130,9 +130,30 @@ dataset = dataset.sample(frac=1).reset_index(drop=True)
 
 #print(dataset.head())
 
-dataset.to_csv("oscillation_dataset.csv", index=False)
+# Train, Val and Test Split
+def train_validate_test_split(df, train_percent=.8, validate_percent=.15, seed=None):
+    np.random.seed(seed)
+    perm = np.random.permutation(df.index)
+    m = len(df.index)
+    train_end = int(train_percent * m)
+    validate_end = int(validate_percent * m) + train_end
+    train = df.iloc[perm[:train_end]]
+    validate = df.iloc[perm[train_end:validate_end]]
+    test = df.iloc[perm[validate_end:]]
+    return train, validate, test
+
+train, validate, test = train_validate_test_split(dataset, train_percent=.8, 
+                                                  validate_percent=.15, seed=42)
+
+
+print("Len Train Dataset: ", len(train))
+print("Len Validate Dataset: ", len(validate))
+print("Len Test Dataset: ", len(test))
+
+train.to_csv("train_oscillation.csv", index=False)
+validate.to_csv("val_oscillation.csv", index=False)
+test.to_csv("test_oscillation.csv", index=False)
 
 print("Process Complete.")
-print("Dataset Generated and Saved as .csv")
+print("Datasets Generated and Saved as .csv's")
 
-#print(dataset)
