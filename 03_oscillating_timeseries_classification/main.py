@@ -1,4 +1,3 @@
-from curses import window
 from models.cnn import CNN1D
 from dataloading import OscillationDataModule
 from trainer import OscillationClassifier
@@ -40,10 +39,11 @@ net = CNN1D(
         n_features=n_features,
         n_targets=n_targets,
         window_size=window_size,
+        feature_dim=5,
         kernel_size=6,
         stride=1,
         dropout=0.2,
-        softmax_output=True, 
+        softmax_output=False, 
         verbose=False
         )
 

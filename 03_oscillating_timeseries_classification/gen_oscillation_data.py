@@ -12,11 +12,11 @@
                                 period of t = 25 seconds.
 
         omega -> Angular Frequency: The Angular Frequency values will be in three different ranges
-                    1. low: (1, 10) rad/s 
-                    2. medium: (25, 35) rad/s 
-                    3. high: (50, 60) rad/s 
+                    1. low: (1, 7) rad/s 
+                    2. medium: (15, 22) rad/s 
+                    3. high: (30, 37) rad/s 
     
-    The oscillation will happen over a time period of t = 25 seconds.
+    The oscillation will happen over a time period of t = 8 seconds.
     The Oscillation will have a data frequency of 100 Hz.
 
     ## Purpose:
@@ -57,7 +57,7 @@ num_samples = int(15e2)
 assert(num_samples % 10 == 0), "Num of samples should be divisible by 10"
 
 # Timestamp array
-t = 25  # seconds
+t = 8  # seconds
 data_frequency = 100 # Hz
 timestamps = np.linspace(0, t, t * data_frequency)
 
@@ -127,6 +127,11 @@ print("Dataset Shape: ", dataset.shape)
 
 # Randomly shuffling this dataset before saving
 dataset = dataset.sample(frac=1).reset_index(drop=True)
+
+# Giving lalel names
+dataset["class_label"] = dataset["class_label"].replace([1], "low")
+dataset["class_label"] = dataset["class_label"].replace([2], "medium")
+dataset["class_label"] = dataset["class_label"].replace([3], "high")
 
 #print(dataset.head())
 

@@ -21,7 +21,8 @@ class OscillationClassifier(pl.LightningModule):
     self.test_accuracy = Accuracy()
 
   def forward(self, x):
-    return self.model(x)
+    x = self.model(x)
+    return torch.nn.functional.log_softmax(x)
 
   def training_step(self, batch, batch_idx):
     oscillation, label = batch
@@ -41,6 +42,7 @@ class OscillationClassifier(pl.LightningModule):
     # Putting data into the network
     output = self.forward(oscillation)
 
+    label = label.flatten()
     # Calculating Loss
     loss = self.criterion(output, label)
 

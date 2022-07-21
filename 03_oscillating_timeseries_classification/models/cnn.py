@@ -71,22 +71,22 @@ class CNN1D(nn.Module):
                             )
 
         self.conv6 = nn.Sequential(
-                            nn.Conv1d(4*feature_dim, 4*feature_dim, kernel_size=3, 
+                            nn.Conv1d(4*feature_dim, self.window_size*feature_dim, kernel_size=3, 
                                       padding=1, stride=stride, bias=True), 
-                            nn.BatchNorm1d(4*feature_dim, 4*feature_dim),
+                            nn.BatchNorm1d(self.window_size*feature_dim, self.window_size*feature_dim),
                             self.activation
                             )
 
         self.dropout = nn.Dropout(dropout, inplace=False)
         
         self.fc1 = nn.Sequential(
-                        nn.Linear(4*feature_dim, 8*feature_dim, bias=True),
+                        nn.Linear(self.window_size*feature_dim, 8*feature_dim, bias=True),
                         self.activation,
                         self.dropout
                                 )
 
         self.fc2 = nn.Sequential(
-                        nn.Linear(self.window_size*(feature_dim//2), 8*feature_dim, bias=True),
+                        nn.Linear(8*feature_dim, 8*feature_dim, bias=True),
                         self.activation,
                         self.dropout
                                 )
@@ -118,13 +118,18 @@ class CNN1D(nn.Module):
         out = self.conv5(out)
         out = self.conv6(out)
 
+        out = out.mean(-1)
+
+        out = out.view(out.size(0), -1) 
+
         out = self.fc1(out)
         out = self.fc2(out)
 
         output = self.output(out)
 
         if self.softmax_output:
-            return nn.LogSoftmax(output)
+            output = nn.Softmax(output)
+            return output
         
         return output
 
