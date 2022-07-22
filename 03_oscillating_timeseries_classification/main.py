@@ -42,9 +42,7 @@ net = CNN1D(
         feature_dim=5,
         kernel_size=6,
         stride=1,
-        dropout=0.2,
-        softmax_output=False, 
-        verbose=False
+        dropout=0.2
         )
 
 # Defining Callbacks
@@ -70,7 +68,7 @@ progress_bar = TQDMProgressBar(refresh_rate=5)
 model = OscillationClassifier(net)
 
 # Defining a Pytorch Lightning Trainer
-N_EPOCHS = 1
+N_EPOCHS = 5
 trainer = pl.Trainer(
     logger = logger,
     enable_progress_bar=True,

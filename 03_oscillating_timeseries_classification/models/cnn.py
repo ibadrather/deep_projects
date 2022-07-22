@@ -2,17 +2,16 @@ import torch.nn as nn
 
 class CNN1D(nn.Module):
     """
-    
-    Input:
-        X: (n_samples, n_channel, n_length)
-        Y: (n_samples)
-        
-    Output:
-        out: (n_samples)
-        
-    Pararmetes:
-        n_targets: number of classes
-        
+        Input:
+            X: (n_samples, n_channel, n_length)
+            Y: (n_samples)
+            
+        Output:
+            out: (n_samples)
+            
+        Pararmetes:
+            n_targets: number of classes
+            
     """
     def __init__(self, 
                 n_features,
@@ -22,9 +21,8 @@ class CNN1D(nn.Module):
                 kernel_size=6,
                 stride=1,
                 activation=nn.ReLU(),
-                dropout=0.2,
-                softmax_output=False, 
-                verbose=False):
+                dropout=0.2
+                ):
         super(CNN1D, self).__init__()
 
         self.n_features = n_features
@@ -32,8 +30,6 @@ class CNN1D(nn.Module):
         self.activation = activation
         self.window_size = window_size
 
-        # if we want a softmax at the output
-        self.softmax_output = softmax_output
 
         self.conv1 = nn.Sequential(
                             nn.Conv1d(self.n_features, feature_dim, kernel_size=kernel_size, 
@@ -109,27 +105,24 @@ class CNN1D(nn.Module):
     
 
     def forward(self, x):
+        # CNNs
         out = self.conv1(x)
         out = self.conv2(out)
-
         out = self.conv3(out)
         out = self.conv4(out)
-
         out = self.conv5(out)
         out = self.conv6(out)
 
+        # Dimension Fitting
         out = out.mean(-1)
-
         out = out.view(out.size(0), -1) 
 
+        # Dense Layers
         out = self.fc1(out)
         out = self.fc2(out)
 
+        # Output
         output = self.output(out)
-
-        if self.softmax_output:
-            output = nn.Softmax(output)
-            return output
         
         return output
 

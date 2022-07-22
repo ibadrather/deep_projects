@@ -3,14 +3,22 @@ from torch.utils.data import Dataset, DataLoader
 import pytorch_lightning as pl
 import pandas as pd
 from multiprocessing import cpu_count
+from sklearn.preprocessing import LabelEncoder
 
 
 class OscillationDataset(Dataset):
     def __init__(self, dataset, downsampling_ratio=2):
-        dataset = pd.read_csv(dataset).values
-        self.labels = dataset[ : , -1:]
+        dataset = pd.read_csv(dataset)
+        # Label Encoding
+        label_encoder = LabelEncoder()
+        encoded_labels = label_encoder.fit_transform(dataset.class_label)
+        dataset["class_label"] = encoded_labels
+        self.labels = dataset["class_label"]
+
+        dataset = dataset.values
         self.oscillations = dataset[ : , :-1]
         self.downsampling_ratio = downsampling_ratio
+
     
     def __len__(self):
         return self.labels.shape[0]
@@ -18,7 +26,7 @@ class OscillationDataset(Dataset):
     def __getitem__(self, idx):
         oscillation = self.oscillations[idx][::self.downsampling_ratio]     # Downsampling the array
         label = self.labels[idx]
-        return torch.Tensor(oscillation).unsqueeze(dim=0), torch.tensor(label, dtype=torch.float)
+        return torch.Tensor(oscillation).unsqueeze(dim=0), torch.tensor(label).long()#torch.tensor(label, dtype=torch.float)
 
 
 class OscillationDataModule(pl.LightningDataModule):
@@ -64,6 +72,7 @@ class OscillationDataModule(pl.LightningDataModule):
 if __name__ == "__main__":
 
     import os
+    import matplotlib.pyplot as plt
 
     try:
         os.system("clear")
@@ -86,4 +95,17 @@ if __name__ == "__main__":
     print("Feature Shape", a.shape)
     print("Label Shape", b.shape)
 
-    print(b.dtype)
+    # # checking data distribution
+    # dataset = pd.read_csv("train_oscillation.csv")
+
+    # dataset.class_label.value_counts().plot(kind="bar")
+    # plt.xticks(rotation=45)
+    # #plt.show()
+
+    # # This is a balanced dataset
+    # # Changing from String Labels to Interger Labels
+    # label_encoder = LabelEncoder()
+    # encoded_labels = label_encoder.fit_transform(dataset.class_label)
+    # print(encoded_labels[:10])
+    # print("Label Classes: ", label_encoder.classes_)
+

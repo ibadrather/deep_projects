@@ -22,7 +22,7 @@ class OscillationClassifier(pl.LightningModule):
 
   def forward(self, x):
     x = self.model(x)
-    return torch.nn.functional.log_softmax(x)
+    return torch.nn.functional.log_softmax(x, dim=-1) #nn.Softmax(x)#
 
   def training_step(self, batch, batch_idx):
     oscillation, label = batch
