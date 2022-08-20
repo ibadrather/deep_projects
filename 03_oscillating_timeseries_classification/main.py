@@ -6,6 +6,7 @@ import  pytorch_lightning as pl
 from pytorch_lightning.callbacks import ModelCheckpoint, EarlyStopping
 from pytorch_lightning.loggers import TensorBoardLogger
 import os
+import matplotlib.pyplot as plt
 
 
 try:
@@ -28,8 +29,10 @@ data_module.setup()
 train_dataloader = data_module.train_dataloader()
 data = iter(train_dataloader)
 a, b = next(data)
-
 print(b)
+plt.plot(a.numpy().flatten())
+plt.savefig("osci.png", dpi=600)
+
 
 # print("Oscillation Shape: ", a.shape)
 # print("Label Shape", b.shape)
@@ -78,7 +81,7 @@ print(b)
 #     enable_progress_bar=True,
 #     callbacks = [early_stopping_callback, early_stopping_callback, progress_bar],
 #     max_epochs = N_EPOCHS,
-#     gpus = 1,
+#     accelerator='gpu',
 #     )
 
 # trainer.fit(model, data_module)

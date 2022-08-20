@@ -21,39 +21,43 @@ class OscillationClassifier(pl.LightningModule):
 
     def forward(self, x):
         x = self.model(x)
-        return F.log_softmax(x, dim=1)
+        return x#F.log_softmax(x, dim=1)
 
     def training_step(self, batch, batch_idx):
         oscillation, label = batch
         
-        logits = self(oscillation)
-        loss = F.nll_loss(logits, label)
+        logits = self.forward(oscillation)
+        loss = self.criterion(logits, label)
         self.log("train_loss", loss, prog_bar=True, logger=True)
         return loss
 
     def validation_step(self, batch, batch_idx):
         oscillation, label = batch
 
-        logits = self(oscillation)
-        loss = F.nll_loss(logits, label)
+        logits = self.forward(oscillation)
+        loss = self.criterion(logits, label)
         preds = torch.argmax(logits, dim=1)
         self.val_accuracy.update(preds, label)
 
         # Calling self.log will surface up scalars for you in TensorBoard
         self.log("val_loss", loss, prog_bar=True)
         self.log("val_acc", self.val_accuracy, prog_bar=True)
+
+        return loss
     
     def test_step(self, batch, batch_idx):
         oscillation, label = batch
 
-        logits = self(oscillation)
-        loss = F.nll_loss(logits, label)
+        logits = self.forward(oscillation)
+        loss = self.criterion(logits, label)
         preds = torch.argmax(logits, dim=1)
         self.test_accuracy.update(preds, label)
 
         # Calling self.log will surface up scalars for you in TensorBoard
         self.log("test_loss", loss, prog_bar=True)
         self.log("test_acc", self.test_accuracy, prog_bar=True)
+
+        return loss
 
     def configure_optimizers(self):
         return optim.Adam(self.model.parameters(), lr=self.learning_rate)

@@ -4,7 +4,8 @@ import pytorch_lightning as pl
 import pandas as pd
 from multiprocessing import cpu_count
 from sklearn.preprocessing import LabelEncoder
-
+import numpy as np
+import matplotlib.pyplot as plt
 
 class OscillationDataset(Dataset):
     def __init__(self, dataset, downsampling_ratio=2):
@@ -17,7 +18,7 @@ class OscillationDataset(Dataset):
         self.labels = dataset["class_label_cat"]
 
         dataset = dataset.values
-        self.oscillations = dataset[ : , :-1]
+        self.oscillations = dataset[ : , :-2]
         self.downsampling_ratio = downsampling_ratio
 
     
@@ -26,9 +27,12 @@ class OscillationDataset(Dataset):
     
 
     def __getitem__(self, idx):
-        oscillation = self.oscillations[idx][::self.downsampling_ratio]     # Downsampling the array
+        oscillation = self.oscillations[idx][::self.downsampling_ratio].astype(np.float32)     # Downsampling the array
+        # To normalise
+        oscillation = oscillation / np.max(oscillation)
+
         label = self.labels[idx]
-        return torch.Tensor(oscillation).unsqueeze(dim=0), torch.Tensor(label)#torch.tensor(label, dtype=torch.float)
+        return torch.Tensor(oscillation).unsqueeze(0), torch.tensor(label).long()   #torch.tensor(label, dtype=torch.float)
 
 
 class OscillationDataModule(pl.LightningDataModule):
@@ -64,7 +68,7 @@ class OscillationDataModule(pl.LightningDataModule):
     return DataLoader(
         self.val_dataset,
         batch_size = self.val_batch_size,
-        shuffle = True,
+        shuffle = False,
         num_workers = cpu_count()
     )
 
