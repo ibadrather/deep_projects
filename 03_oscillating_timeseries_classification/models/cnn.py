@@ -29,11 +29,13 @@ class CNN1D(nn.Module):
         self.n_targets = n_targets
         self.activation = activation
         self.window_size = window_size
+        self.pooling = nn.MaxPool1d
 
 
         self.conv1 = nn.Sequential(
                             nn.Conv1d(self.n_features, feature_dim, kernel_size=kernel_size, 
                                       padding=kernel_size//2, stride=stride, bias=True), 
+                            self.pooling(2),
                             nn.BatchNorm1d(feature_dim, feature_dim),
                             self.activation
                             )
@@ -41,13 +43,15 @@ class CNN1D(nn.Module):
         self.conv2 = nn.Sequential(
                             nn.Conv1d(feature_dim, 2*feature_dim, kernel_size=3, 
                                       padding=1, stride=stride, bias=True), 
+                            self.pooling(2),
                             nn.BatchNorm1d(2*feature_dim, 2*feature_dim),
                             self.activation
                             )
 
         self.conv3 = nn.Sequential(
                             nn.Conv1d(2*feature_dim, 2*feature_dim, kernel_size=3, 
-                                      padding=1, stride=stride, bias=True), 
+                                      padding=1, stride=stride, bias=True),
+                            self.pooling(2),
                             nn.BatchNorm1d(2*feature_dim, 2*feature_dim),
                             self.activation
                             )
@@ -55,6 +59,7 @@ class CNN1D(nn.Module):
         self.conv4 = nn.Sequential(
                             nn.Conv1d(2*feature_dim, 2*feature_dim, kernel_size=3, 
                                       padding=1, stride=stride, bias=True), 
+                            self.pooling(2),
                             nn.BatchNorm1d(2*feature_dim, 2*feature_dim),
                             self.activation
                             )
@@ -62,6 +67,7 @@ class CNN1D(nn.Module):
         self.conv5 = nn.Sequential(
                             nn.Conv1d(2*feature_dim, 4*feature_dim, kernel_size=3, 
                                       padding=1, stride=stride, bias=True), 
+                            self.pooling(2),
                             nn.BatchNorm1d(4*feature_dim, 4*feature_dim),
                             self.activation
                             )
@@ -69,6 +75,7 @@ class CNN1D(nn.Module):
         self.conv6 = nn.Sequential(
                             nn.Conv1d(4*feature_dim, self.window_size*feature_dim, kernel_size=3, 
                                       padding=1, stride=stride, bias=True), 
+                            self.pooling(2),
                             nn.BatchNorm1d(self.window_size*feature_dim, self.window_size*feature_dim),
                             self.activation
                             )

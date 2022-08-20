@@ -150,6 +150,7 @@ def train_validate_test_split(df, train_percent=.8, validate_percent=.15, seed=N
 train, validate, test = train_validate_test_split(dataset, train_percent=.8, 
                                                   validate_percent=.15, seed=42)
 
+train, validate, test = train.dropna(), validate.dropna(), test.dropna()
 
 print("Len Train Dataset: ", len(train))
 print("Len Validate Dataset: ", len(validate))
@@ -162,3 +163,13 @@ test.to_csv("test_oscillation.csv", index=False)
 print("Process Complete.")
 print("Datasets Generated and Saved as .csv's")
 
+## Sanity checking the data
+
+# print(train.isnull().values.any())
+# print(validate.isnull().values.any())
+# print(test.isnull().values.any())
+
+
+# print(train.isnull().sum().sum())
+# print(validate.isnull().sum().sum())
+# print(test.isnull().sum().sum())

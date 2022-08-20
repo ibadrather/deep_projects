@@ -7,7 +7,7 @@ from torchmetrics import Accuracy
 
 
 class OscillationClassifier(pl.LightningModule):
-    def __init__(self, model, learning_rate=1e-3):
+    def __init__(self, model, learning_rate=1e-5):
         super().__init__()
         self.model = model
         self.learning_rate = learning_rate
@@ -21,7 +21,7 @@ class OscillationClassifier(pl.LightningModule):
 
     def forward(self, x):
         x = self.model(x)
-        return x#F.log_softmax(x, dim=1)
+        return F.log_softmax(x, dim=1)
 
     def training_step(self, batch, batch_idx):
         oscillation, label = batch

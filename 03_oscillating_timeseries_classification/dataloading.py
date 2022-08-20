@@ -23,13 +23,13 @@ class OscillationDataset(Dataset):
 
     
     def __len__(self):
-        return self.labels.shape[0]
+        return self.oscillations.shape[0]
     
 
     def __getitem__(self, idx):
         oscillation = self.oscillations[idx][::self.downsampling_ratio].astype(np.float32)     # Downsampling the array
         # To normalise
-        oscillation = oscillation / np.max(oscillation)
+        #oscillation = oscillation / np.max(oscillation)
 
         label = self.labels[idx]
         return torch.Tensor(oscillation).unsqueeze(0), torch.tensor(label).long()   #torch.tensor(label, dtype=torch.float)
