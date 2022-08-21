@@ -29,10 +29,10 @@ class OscillationDataset(Dataset):
     def __getitem__(self, idx):
         oscillation = self.oscillations[idx][::self.downsampling_ratio].astype(np.float32)     # Downsampling the array
         # To normalise
-        #oscillation = oscillation / np.max(oscillation)
+        oscillation = oscillation / np.max(oscillation)
 
         label = self.labels[idx]
-        return torch.Tensor(oscillation).unsqueeze(0), torch.tensor(label).long()   #torch.tensor(label, dtype=torch.float)
+        return torch.Tensor(oscillation).unsqueeze(0), torch.tensor(label).to(dtype=torch.long)   #torch.tensor(label, dtype=torch.float)
 
 
 class OscillationDataModule(pl.LightningDataModule):
@@ -81,8 +81,7 @@ class OscillationDataModule(pl.LightningDataModule):
     )
 
 
-if __name__ == "__main__":
-
+def main():
     import os
     import matplotlib.pyplot as plt
 
@@ -121,3 +120,6 @@ if __name__ == "__main__":
     # print(encoded_labels[:10])
     # print("Label Classes: ", label_encoder.classes_)
 
+
+if __name__ == "__main__":
+    main()

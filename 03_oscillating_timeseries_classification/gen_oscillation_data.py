@@ -52,7 +52,7 @@ except:
     pass
 
 # Num of samples we want to generate
-num_samples = int(15e2)
+num_samples = 5000  #int(15e2)
 
 assert(num_samples % 10 == 0), "Num of samples should be divisible by 10"
 
@@ -67,15 +67,15 @@ time_constants = random.uniform(1, 10e2, num_samples)
 
 # Now we generate the angular frequencies in the low, medium and high range and their labels
 # Low Frequeny data
-low_frequencies = random.uniform(1, 7, num_samples//3)
+low_frequencies = random.uniform(0.5, 2, num_samples//3)
 low_freq_labels = np.full_like(low_frequencies, 1, dtype=int)
 
 # Medium frequency data
-medium_frequencies = random.uniform(15, 22, num_samples//3)
+medium_frequencies = random.uniform(8, 14, num_samples//3)
 medium_freq_labels = np.full_like(medium_frequencies, 2, dtype=int)
 
 # High frequency data
-high_frequencies = random.uniform(30, 37, num_samples//3 + 1)   # adding 1 because multiples of 10 not divisible by 3
+high_frequencies = random.uniform(25, 30, num_samples//3 + 1)   # adding 1 because multiples of 10 not divisible by 3
 high_freq_labels = np.full_like(high_frequencies, 3, dtype=int)
 
 # stacking these three frequency and label arrays together
@@ -86,8 +86,8 @@ labels = np.hstack((low_freq_labels, medium_freq_labels, high_freq_labels))
 # Generating Oscillations
 oscillations = []
 class_labels = []
-for i in tqdm(range(amplitudes.shape[0])):
-    oscillation = amplitudes[i] * np.exp(-timestamps/time_constants[i]) * np.sin(angular_frequencies[i] * timestamps)
+for i, (amplitude, time_constant,angular_frequency ) in tqdm(enumerate(zip(amplitudes, time_constants, angular_frequencies))):
+    oscillation = amplitude * np.exp(-timestamps/time_constant) * np.sin(angular_frequency * timestamps)
     label = labels[i]
 
     oscillations.append(oscillation)
@@ -165,11 +165,11 @@ print("Datasets Generated and Saved as .csv's")
 
 ## Sanity checking the data
 
-# print(train.isnull().values.any())
-# print(validate.isnull().values.any())
-# print(test.isnull().values.any())
+print(train.isnull().values.any())
+print(validate.isnull().values.any())
+print(test.isnull().values.any())
 
 
-# print(train.isnull().sum().sum())
-# print(validate.isnull().sum().sum())
-# print(test.isnull().sum().sum())
+print(train.isnull().sum().sum())
+print(validate.isnull().sum().sum())
+print(test.isnull().sum().sum())

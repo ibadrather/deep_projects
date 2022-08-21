@@ -13,7 +13,7 @@ class OscillationClassifier(pl.LightningModule):
         self.learning_rate = learning_rate
 
         # Criterion
-        self.criterion = F.nll_loss
+        self.criterion = nn.CrossEntropyLoss(reduction='sum')
 
         # Accuracy
         self.val_accuracy = Accuracy()
@@ -21,12 +21,13 @@ class OscillationClassifier(pl.LightningModule):
 
     def forward(self, x):
         x = self.model(x)
-        return F.log_softmax(x, dim=1)
+        return x    #F.log_softmax(x, dim=1)
 
     def training_step(self, batch, batch_idx):
         oscillation, label = batch
         
         logits = self.forward(oscillation)
+        print(logits)
         loss = self.criterion(logits, label)
         self.log("train_loss", loss, prog_bar=True, logger=True)
         return loss
@@ -36,7 +37,7 @@ class OscillationClassifier(pl.LightningModule):
 
         logits = self.forward(oscillation)
         loss = self.criterion(logits, label)
-        preds = torch.argmax(logits, dim=1)
+        preds = F.log_softmax(logits, dim=1).argmax(dim=1)
         self.val_accuracy.update(preds, label)
 
         # Calling self.log will surface up scalars for you in TensorBoard
@@ -50,7 +51,7 @@ class OscillationClassifier(pl.LightningModule):
 
         logits = self.forward(oscillation)
         loss = self.criterion(logits, label)
-        preds = torch.argmax(logits, dim=1)
+        preds = F.log_softmax(logits, dim=1).argmax(dim=1)
         self.test_accuracy.update(preds, label)
 
         # Calling self.log will surface up scalars for you in TensorBoard

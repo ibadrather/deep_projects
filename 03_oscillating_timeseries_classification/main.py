@@ -67,13 +67,13 @@ checkpoint_callback = ModelCheckpoint(
 logger = TensorBoardLogger("lightning_logs", name = "osci-predict")
 
 # Stop trainining if model is not improving
-early_stopping_callback = EarlyStopping(monitor = "val_loss", patience = 3)
+early_stopping_callback = EarlyStopping(monitor = "val_loss", patience = 50)
 
 # Progress bar
 progress_bar = TQDMProgressBar(refresh_rate=5)
 
 # Model
-model = OscillationClassifier(net)
+model = OscillationClassifier(net, learning_rate=1e-5)
 
 # Defining a Pytorch Lightning Trainer
 N_EPOCHS = 20
