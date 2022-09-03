@@ -78,8 +78,8 @@ class VGG1D(nn.Module):
         
         self. fc3 = nn.Linear(4096, output_size)
          
-
         self.init_weights()
+    
     
     def forward(self, x):
         for block in self.convs:
@@ -120,7 +120,6 @@ def get_vgg(in_channels, output_size, architecture="vgg19"):
     return net
     
 
-
 # Let's see if this works
 def main():
     import os
@@ -133,14 +132,10 @@ def main():
     data = torch.rand(8, 6, 136)
 
     vgg = get_vgg(in_channels=data.shape[1], output_size=6, architecture="vgg11")
-    #print(next(iter(vgg.modules())))
-
-    #vgg(data)
 
     summary(vgg, input_size=(8, 6, 136))
 
-
-
+    return
 
 if __name__ == "__main__":
     main()

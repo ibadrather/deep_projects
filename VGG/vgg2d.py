@@ -1,14 +1,6 @@
-from turtle import forward
 import torch
 import torch.nn as nn
 
-
-VVGs = dict(
-    VGG11 = [1, 1, 2, 2, 2],
-    VGG13 = [2, 2, 2, 2, 2],
-    VGG16 = [2, 2, 3, 3, 3],
-    VGG19 = [2, 2, 4, 4, 4],
-)
 
 class Block(nn.Module):
     """
@@ -49,6 +41,7 @@ class Block(nn.Module):
         # Now let's add these layers sequtially
         self.block = nn.Sequential(*layers)
     
+
     def forward(self, x):
         return self.block(x)
 
@@ -85,8 +78,8 @@ class VGG2D(nn.Module):
         
         self. fc3 = nn.Linear(4096, output_size)
          
-
         self.init_weights()
+    
     
     def forward(self, x):
         for block in self.convs:
@@ -135,11 +128,10 @@ def main():
     data = torch.rand(8, 3, 224, 224)
 
     vgg = get_vgg(in_channels=data.shape[1], output_size=6, architecture="vgg11")
-    #print(next(iter(vgg.modules())))
-
-    #vgg(data)
 
     summary(vgg, input_size=(2, 3, 224, 224))
+
+    return
 
 
 if __name__ == "__main__":
