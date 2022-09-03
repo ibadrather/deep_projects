@@ -2,7 +2,8 @@
 lightning_logs
 *.csv
 
-
+lightning_logs
+MNIST
 
 
 ##################################################
