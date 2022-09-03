@@ -126,6 +126,7 @@ def get_vgg(in_channels, output_size, architecture="vgg19"):
 # Let's see if this works
 def main():
     import os
+    from torchinfo import summary
     try:
         os.system("clear")
     except:
@@ -133,10 +134,12 @@ def main():
     
     data = torch.rand(8, 3, 224, 224)
 
-    vgg = get_vgg(in_channels=data.shape[1], output_size=6, architecture="vgg19")
-    print(next(iter(vgg.modules())))
+    vgg = get_vgg(in_channels=data.shape[1], output_size=6, architecture="vgg11")
+    #print(next(iter(vgg.modules())))
 
     #vgg(data)
+
+    summary(vgg, input_size=(2, 3, 224, 224))
 
 
 if __name__ == "__main__":

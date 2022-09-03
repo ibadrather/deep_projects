@@ -24,7 +24,7 @@ class Block(nn.Module):
                 ]
 
         # Add other layers if required
-        for _ in range(num_layers):
+        for _ in range(num_layers - 1):
             layers.append(nn.Conv1d(
                     in_channels=out_channels,
                     out_channels=out_channels,
@@ -46,7 +46,7 @@ class Block(nn.Module):
 
 
 class VGG1D(nn.Module):
-    def __init__(self, in_channels: int, output_size: int, VGG_type: list[:int]):
+    def __init__(self, in_channels: int, output_size: int, VGG_type: list):
         super().__init__()
 
         self.feature_maps = [in_channels, 64, 128, 256, 512, 512]
@@ -124,6 +124,7 @@ def get_vgg(in_channels, output_size, architecture="vgg19"):
 # Let's see if this works
 def main():
     import os
+    from torchinfo import summary
     try:
         os.system("clear")
     except:
@@ -131,10 +132,12 @@ def main():
     
     data = torch.rand(8, 6, 136)
 
-    vgg = get_vgg(in_channels=data.shape[1], output_size=6, architecture="vgg19")
-    print(next(iter(vgg.modules())))
+    vgg = get_vgg(in_channels=data.shape[1], output_size=6, architecture="vgg11")
+    #print(next(iter(vgg.modules())))
 
     #vgg(data)
+
+    summary(vgg, input_size=(8, 6, 136))
 
 
 
