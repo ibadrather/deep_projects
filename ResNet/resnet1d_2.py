@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 
+
 def conv(in_channels, out_channels, kernel_size, stride):
     return nn.Conv1d(
         in_channels=in_channels,
@@ -38,6 +39,7 @@ class Block(nn.Module):
                     nn.BatchNorm1d(2*out_channels),
                 )
     
+
     def forward(self, x):
         # for skip connection
         residual = x
