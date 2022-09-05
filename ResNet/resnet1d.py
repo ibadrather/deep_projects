@@ -8,17 +8,17 @@ class Block(nn.Module):
 
         self.expansion = 4  # out 4x in as seen in the table
 
-        self.conv1 = nn.Conv2d(in_channels, out_channels, kernel_size=1, 
+        self.conv1 = nn.Conv1d(in_channels, out_channels, kernel_size=1, 
                                stride=1, padding=0)
-        self.bn1 = nn.BatchNorm2d(out_channels)
+        self.bn1 = nn.BatchNorm1d(out_channels)
 
-        self.conv2 = nn.Conv2d(out_channels, out_channels, kernel_size=3, 
+        self.conv2 = nn.Conv1d(out_channels, out_channels, kernel_size=3, 
                                stride=stride, padding=1)
-        self.bn2 = nn.BatchNorm2d(out_channels)
+        self.bn2 = nn.BatchNorm1d(out_channels)
 
-        self.conv3 = nn.Conv2d(out_channels, out_channels*self.expansion, kernel_size=1, 
+        self.conv3 = nn.Conv1d(out_channels, out_channels*self.expansion, kernel_size=1, 
                                stride=1, padding=0)
-        self.bn3 = nn.BatchNorm2d(out_channels*self.expansion)
+        self.bn3 = nn.BatchNorm1d(out_channels*self.expansion)
 
         self.relu = nn.ReLU()
 
@@ -47,23 +47,23 @@ class Block(nn.Module):
         return x
 
 
-class Resnet2D(nn.Module):  # [3, 4, 6, 3]
+class Resnet1D(nn.Module):  # [3, 4, 6, 3]
     def __init__(self, block: Block, layers, data_channels: int, output_size: int):
         """
             data_channels: it can be number of image channels or imu data chanenls
             output_size: it can be number of classes 
         """
-        super(Resnet2D, self).__init__()
+        super(Resnet1D, self).__init__()
         self.in_channels = 64
 
         self.expansion = 4
 
-        self.conv1 = nn.Conv2d(data_channels, self.in_channels, kernel_size=7, 
+        self.conv1 = nn.Conv1d(data_channels, self.in_channels, kernel_size=7, 
                                stride=2, padding=3)
-        self.bn1 = nn.BatchNorm2d(self.in_channels)
+        self.bn1 = nn.BatchNorm1d(self.in_channels)
         
         self.relu = nn.ReLU()
-        self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
+        self.maxpool = nn.MaxPool1d(kernel_size=3, stride=2, padding=1)
 
         # ResNet layers
         # self.layer1 = ...
@@ -92,7 +92,7 @@ class Resnet2D(nn.Module):  # [3, 4, 6, 3]
                                        stride=2
                                        )
         
-        self.avgpool = nn.AdaptiveAvgPool2d((1,1))
+        self.avgpool = nn.AdaptiveAvgPool1d((1,1))
 
         self.fc = nn.Linear(512*self.expansion, output_size)
 
@@ -126,11 +126,11 @@ class Resnet2D(nn.Module):  # [3, 4, 6, 3]
 
         if stride != 1 or  self.in_channels != out_channels*self.expansion:
             identity_downsample = nn.Sequential(
-                                    nn.Conv2d(in_channels=self.in_channels, 
+                                    nn.Conv1d(in_channels=self.in_channels, 
                                         out_channels=out_channels*self.expansion,
                                         kernel_size=1,
                                         stride=stride),
-                                    nn.BatchNorm2d(out_channels*self.expansion)
+                                    nn.BatchNorm1d(out_channels*self.expansion)
                                 )
         
         layers.append(block(in_channels=self.in_channels, 
@@ -149,33 +149,33 @@ class Resnet2D(nn.Module):  # [3, 4, 6, 3]
 
 
 # def Resnet9(data_channels, output_size=1000):
-#     return Resnet2D(block=Block, 
+#     return Resnet1d(block=Block, 
 #                     layers=[1, 2],
 #                     data_channels=data_channels,
 #                     output_size=output_size)
 
 
 def Resnet18(data_channels, output_size=1000):
-    return Resnet2D(block=Block, 
+    return Resnet1D(block=Block, 
                     layers=[1, 1, 2, 2],
                     data_channels=data_channels,
                     output_size=output_size)
 
 
 def Resnet50(data_channels, output_size=1000):
-    return Resnet2D(block=Block, 
+    return Resnet1D(block=Block, 
                     layers=[3, 4, 6, 3],
                     data_channels=data_channels,
                     output_size=output_size)
     
 def Resnet101(data_channels, output_size=1000):
-    return Resnet2D(block=Block, 
+    return Resnet1D(block=Block, 
                     layers=[3, 4, 23, 3],
                     data_channels=data_channels,
                     output_size=output_size)
 
 def Resnet152(data_channels, output_size=1000):
-    return Resnet2D(block=Block, 
+    return Resnet1D(block=Block, 
                     layers=[3, 8, 36, 3],
                     data_channels=data_channels,
                     output_size=output_size)
@@ -188,7 +188,7 @@ def test():
         os.system("clear")
     except:
         pass
-    input_data = torch.randn(2, 3, 224, 244)    # 2 images of dims(224, 224, 3)
+    input_data = torch.randn(2, 6, 224)
     data_channels = input_data.shape[1]
     
     net = Resnet152(data_channels=data_channels,
@@ -196,7 +196,7 @@ def test():
     
     #y = net(input_data).to("cuda")
 
-    summary(net, input_size=(2, 3, 224, 244))
+    summary(net, input_size=(2, 6, 224))
 
 if __name__ == "__main__":
     test()
