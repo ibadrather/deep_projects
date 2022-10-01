@@ -32,11 +32,10 @@ predicted_pt = []
 actual_pt = []
 for x, y in zip(X_test, y_test):
     x = torch.Tensor(x)
-    y = torch.Tensor([y])
     output = torch_model(x)
     #print("Predicted: ", output.argmax().item(), "Actual: ", y.item())
     predicted_pt.append(output.argmax().item())
-    actual_pt.append(y.item())
+    actual_pt.append(y)
 
 print("Claasification Report (PyTorch): \n", classification_report(actual_pt, predicted_pt))
 
@@ -75,7 +74,6 @@ predicted_onnx = []
 actual_onnx = []
 for x, y in zip(X_test, y_test):
     x = torch.Tensor(x)
-    y = torch.Tensor([y])
 
     # compute ONNX Runtime output prediction
     ort_inputs = {ort_session.get_inputs()[0].name: to_numpy(x)}
@@ -83,7 +81,7 @@ for x, y in zip(X_test, y_test):
 
     #print("Predicted: ", output.argmax().item(), "Actual: ", y.item())
     predicted_onnx.append(ort_outs.argmax())
-    actual_onnx.append(y.item())
+    actual_onnx.append(y)
 
 
 print("Accuracy Score (ONNX): ", accuracy_score(actual_onnx, predicted_onnx))
