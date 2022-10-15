@@ -52,13 +52,13 @@ except:
     pass
 
 # Num of samples we want to generate
-num_samples = 5000  #int(15e2)
+num_samples = 5000  # int(15e2)
 
-assert(num_samples % 10 == 0), "Num of samples should be divisible by 10"
+assert num_samples % 10 == 0, "Num of samples should be divisible by 10"
 
 # Timestamp array
 t = 8  # seconds
-data_frequency = 100 # Hz
+data_frequency = 100  # Hz
 timestamps = np.linspace(0, t, t * data_frequency)
 
 # Generating oscillation parameters
@@ -67,15 +67,17 @@ time_constants = random.uniform(1, 10e2, num_samples)
 
 # Now we generate the angular frequencies in the low, medium and high range and their labels
 # Low Frequeny data
-low_frequencies = random.uniform(0.5, 2, num_samples//3)
+low_frequencies = random.uniform(0.5, 2, num_samples // 3)
 low_freq_labels = np.full_like(low_frequencies, 1, dtype=int)
 
 # Medium frequency data
-medium_frequencies = random.uniform(8, 14, num_samples//3)
+medium_frequencies = random.uniform(8, 14, num_samples // 3)
 medium_freq_labels = np.full_like(medium_frequencies, 2, dtype=int)
 
 # High frequency data
-high_frequencies = random.uniform(25, 30, num_samples//3 + 1)   # adding 1 because multiples of 10 not divisible by 3
+high_frequencies = random.uniform(
+    25, 30, num_samples // 3 + 1
+)  # adding 1 because multiples of 10 not divisible by 3
 high_freq_labels = np.full_like(high_frequencies, 3, dtype=int)
 
 # stacking these three frequency and label arrays together
@@ -86,8 +88,14 @@ labels = np.hstack((low_freq_labels, medium_freq_labels, high_freq_labels))
 # Generating Oscillations
 oscillations = []
 class_labels = []
-for i, (amplitude, time_constant,angular_frequency ) in tqdm(enumerate(zip(amplitudes, time_constants, angular_frequencies))):
-    oscillation = amplitude * np.exp(-timestamps/time_constant) * np.sin(angular_frequency * timestamps)
+for i, (amplitude, time_constant, angular_frequency) in tqdm(
+    enumerate(zip(amplitudes, time_constants, angular_frequencies))
+):
+    oscillation = (
+        amplitude
+        * np.exp(-timestamps / time_constant)
+        * np.sin(angular_frequency * timestamps)
+    )
     label = labels[i]
 
     oscillations.append(oscillation)
@@ -101,20 +109,21 @@ class_labels = np.array(class_labels)
 
 # Let's visualise a single oscillation in each class
 import matplotlib.pyplot as plt
+
 fig, (ax1, ax2, ax3) = plt.subplots(3)
 fig.tight_layout()
-#fig.suptitle('Oscillations of Different Frequencies')
+# fig.suptitle('Oscillations of Different Frequencies')
 ax1.plot(oscillations[0])
 ax1.set_title("Low Frequency")
 
-ax2.plot(oscillations[oscillations.shape[0]//3+10])
+ax2.plot(oscillations[oscillations.shape[0] // 3 + 10])
 ax2.set_title("Medium Frequency")
 
 ax3.plot(oscillations[-1])
 ax3.set_title("High Frequency")
 
 plt.savefig("3_classes_oscillations.png", dpi=300)
-#plt.show()
+# plt.show()
 plt.close("all")
 
 # Creating a DataFrame of this Data
@@ -133,10 +142,10 @@ dataset["class_label"] = dataset["class_label"].replace([1], "low")
 dataset["class_label"] = dataset["class_label"].replace([2], "medium")
 dataset["class_label"] = dataset["class_label"].replace([3], "high")
 
-#print(dataset.head())
+# print(dataset.head())
 
 # Train, Val and Test Split
-def train_validate_test_split(df, train_percent=.8, validate_percent=.15, seed=None):
+def train_validate_test_split(df, train_percent=0.8, validate_percent=0.15, seed=None):
     np.random.seed(seed)
     perm = np.random.permutation(df.index)
     m = len(df.index)
@@ -147,8 +156,10 @@ def train_validate_test_split(df, train_percent=.8, validate_percent=.15, seed=N
     test = df.iloc[perm[validate_end:]]
     return train, validate, test
 
-train, validate, test = train_validate_test_split(dataset, train_percent=.8, 
-                                                  validate_percent=.15, seed=42)
+
+train, validate, test = train_validate_test_split(
+    dataset, train_percent=0.8, validate_percent=0.15, seed=42
+)
 
 train, validate, test = train.dropna(), validate.dropna(), test.dropna()
 

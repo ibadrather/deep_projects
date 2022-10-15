@@ -13,7 +13,7 @@ class OscillationClassifier(pl.LightningModule):
         self.learning_rate = learning_rate
 
         # Criterion
-        self.criterion = nn.CrossEntropyLoss(reduction='sum')
+        self.criterion = nn.CrossEntropyLoss(reduction="sum")
 
         # Accuracy
         self.val_accuracy = Accuracy()
@@ -21,11 +21,11 @@ class OscillationClassifier(pl.LightningModule):
 
     def forward(self, x):
         x = self.model(x)
-        return x    #F.log_softmax(x, dim=1)
+        return x  # F.log_softmax(x, dim=1)
 
     def training_step(self, batch, batch_idx):
         oscillation, label = batch
-        
+
         logits = self.forward(oscillation)
         print(logits)
         loss = self.criterion(logits, label)
@@ -45,7 +45,7 @@ class OscillationClassifier(pl.LightningModule):
         self.log("val_acc", self.val_accuracy, prog_bar=True)
 
         return loss
-    
+
     def test_step(self, batch, batch_idx):
         oscillation, label = batch
 
