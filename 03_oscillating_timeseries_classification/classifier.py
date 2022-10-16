@@ -13,7 +13,7 @@ class OscillationClassifier(pl.LightningModule):
         self.learning_rate = learning_rate
 
         # Criterion
-        self.criterion = nn.CrossEntropyLoss(reduction="sum")
+        self.criterion = nn.LogSoftmax()  #nn.CrossEntropyLoss(reduction="sum")
 
         # Accuracy
         self.val_accuracy = Accuracy()
