@@ -78,9 +78,9 @@ def trainer(
                             patience = 0
 
                         else:
-                            patience += 1   
+                            patience += 1
 
-                            # early stopping 
+                            # early stopping
                             if patience >= patience:
                                 return model
 

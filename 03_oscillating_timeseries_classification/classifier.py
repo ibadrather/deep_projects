@@ -18,6 +18,7 @@ class OscillationClassifier(pl.LightningModule):
         # Accuracy
         self.val_accuracy = Accuracy()
         self.test_accuracy = Accuracy()
+        self.train_accuracy = Accuracy()
 
     def configure_optimizers(self):
         optimizer = torch.optim.Adam(self.parameters(), lr=self.lr)
@@ -35,6 +36,9 @@ class OscillationClassifier(pl.LightningModule):
         logits = self.forward(feat)
         loss = self.criterion(logits, label)
         self.log("train_loss", loss, prog_bar=True, logger=True)
+        preds = F.log_softmax(logits, dim=1).argmax(dim=1)
+        self.train_accuracy.update(preds, label)
+        self.log("train_acc", self.train_accuracy, prog_bar=True)
         return loss
 
     def validation_step(self, batch, batch_idx):
@@ -64,6 +68,7 @@ class OscillationClassifier(pl.LightningModule):
         self.log("test_acc", self.test_accuracy, prog_bar=True)
 
         return loss
+
 
 if __name__ == "__main__":
     pass
