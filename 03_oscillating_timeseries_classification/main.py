@@ -7,7 +7,7 @@ from pytorch_lightning.callbacks import ModelCheckpoint, EarlyStopping
 from pytorch_lightning.loggers import TensorBoardLogger
 import os
 import matplotlib.pyplot as plt
-
+from models.resnet import ResNet1D
 
 try:
     os.system("clear")
@@ -43,14 +43,11 @@ window_size = a.shape[2]
 n_targets = 3  # Classifying as low, medium and high frequency
 
 # Defining Neural Net
-net = CNN1D(
+net = ResNet1D(
     n_features=n_features,
     n_targets=n_targets,
     window_size=window_size,
-    feature_dim=5,
-    kernel_size=6,
-    stride=1,
-    dropout=0.2,
+    group_sizes=[1, 1, 1, 1],
 )
 
 # Defining Callbacks
@@ -73,7 +70,7 @@ early_stopping_callback = EarlyStopping(monitor="val_loss", patience=50)
 progress_bar = TQDMProgressBar(refresh_rate=5)
 
 # Model
-model = OscillationClassifier(net, learning_rate=1e-5)
+model = OscillationClassifier(net, lr=1e-5)
 
 # Defining a Pytorch Lightning Trainer
 N_EPOCHS = 20
